@@ -10,9 +10,10 @@ import Foundation
 
 
 struct APIClient {
+    let ip = "10.48.67.179"
+    
     func fetchData(estacion: String) async throws -> lastLecture {
         
-        let ip = "192.168.0.12"
         
         let urlString = "http://\(ip)/api_handler_swift/get_zone_info.php/\(estacion)"
         
@@ -33,7 +34,8 @@ struct APIClient {
             return dataFromServer
         }
         
-    }
+    }    
+    
 }
 
 
@@ -41,4 +43,5 @@ struct APIClient {
 enum APIErrors: Error {
     case invalidURL
     case invalidResponse
+    case decodingError
 }

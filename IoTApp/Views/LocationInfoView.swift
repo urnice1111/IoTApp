@@ -8,10 +8,11 @@
 import SwiftUI
 
 
-struct HomeView: View {
+struct LocationInfoView: View {
 
     @State private var lastInfo: lastLecture? = nil
     var piHandler: APIClient?
+    let nombreEstacion: String
     
     let fontSize: CGFloat = 100
     
@@ -27,8 +28,12 @@ struct HomeView: View {
             .ignoresSafeArea()
 
             VStack{
+                
+                Text(lastInfo?.estacion ?? "Estacion")
+                    .font(.system(size: 80))
+                    .padding(30)
                 Text("Temperatura: ")
-                Text(Double(lastInfo?.temperatura ?? 0), format: .number.precision(.fractionLength(0)))
+                Text(Double(lastInfo?.temperatura ?? 0), format: .number.precision(.fractionLength(0))) //Sin decimales
                     .font(.system(size: fontSize))
                 + Text("°")
                     .font(.system(size: fontSize))
@@ -37,7 +42,7 @@ struct HomeView: View {
         }
         .task {
             do {
-                lastInfo = try await APIClient().fetchData(estacion: "cafeteria")
+                lastInfo = try await APIClient().fetchData(estacion: nombreEstacion)
             } catch APIErrors.invalidURL{
                 print("Invalid URL, CHECK URL!")
             } catch APIErrors.invalidResponse{
@@ -52,6 +57,6 @@ struct HomeView: View {
 
 
 #Preview {
-    HomeView()
+    LocationInfoView(nombreEstacion: "Biblioteca")
 }
 
