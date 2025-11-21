@@ -13,10 +13,10 @@ struct ContentView: View {
     
     var body: some View {
         if viewModel.ubicaciones.isEmpty {
-            ProgressView("Cargando ubicaciones...")
+            ProgressView("Revisa tu conexión a internet")
                 .task {
                     try?await viewModel.fetchLocations()
-                }
+            }
         } else {
             TabView {
                 ForEach(viewModel.ubicaciones) {ubicacion in

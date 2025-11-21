@@ -42,8 +42,8 @@ struct LocationInfoView: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .center)
                 
-                Image(systemName: "cloud.rain")
-                    .foregroundColor(.white)
+                Image(systemName: "thermometer.variable")
+                    .foregroundColor(colorTemperatura(lastInfo?.temperatura ?? 0))
                     .font(.system(size: 80))
                     .frame(maxWidth: .infinity, alignment: .center)
                 
@@ -109,7 +109,7 @@ struct WeatherBottomCard: View {
                 .font(.headline)
             
             HStack(spacing: 24) {
-                WeatherItem(title: "Presion", value: String(presion), systemImage: "aqi.medium")
+                WeatherItem(title: "Presión", value: String(presion), systemImage: "aqi.medium")
                 Spacer()
                 WeatherItem(title: "Humedad", value: String(humedad), systemImage: "humidity")
             }
@@ -128,7 +128,8 @@ struct WeatherItem: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
                     .font(.caption)
-                    .foregroundColor(.secondary)
+                    .foregroundColor(.primary)
+                    .fontWeight(.bold)
                 Text(value)
                     .font(.headline)
             }
@@ -165,7 +166,16 @@ struct airQualityItem: View {
             .frame(width: 100, height: 100)
             
             Spacer()
-            Text(textoCalidadAire(calidadAire))
+            VStack{
+                Text("Calidad del aire:")
+                    .foregroundColor(.primary)
+                    .fontWeight(.bold)
+                    .frame(alignment: .center)
+                    
+                
+                Text(textoCalidadAire(calidadAire))
+            }
+            
         }
     }
 }
@@ -203,6 +213,25 @@ func colorCalidadAire(_ calidadAire: Float) -> Color {
         return .red
     default:
         return .blue
+    }
+}
+
+func colorTemperatura(_ temp: Float) -> Color {
+    switch temp {
+    case ..<10:
+        return Color.blue.opacity(0.85)           // Muy frío
+    case 10..<15:
+        return Color.cyan.opacity(0.85)           // Frío
+    case 15..<20:
+        return Color.teal.opacity(0.85)           // Fresco
+    case 20..<25:
+        return Color.green.opacity(0.85)          // Confort
+    case 25..<30:
+        return Color.yellow.opacity(0.85)         // Caluroso
+    case 30..<35:
+        return Color.orange.opacity(0.85)         // Muy caluroso
+    default:
+        return Color.red.opacity(0.85)            // Peligro
     }
 }
 
