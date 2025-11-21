@@ -15,4 +15,6 @@ struct lastLecture: Codable {
     let humedad: Float
     let presion: Float
     let calidadAire: Float
+    let fecha: String
+    let hora: String
 }

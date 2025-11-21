@@ -8,37 +8,81 @@
 import SwiftUI
 
 
-struct LocationInfoView: View {
 
+struct LocationInfoView: View {
     @State private var lastInfo: lastLecture? = nil
     var piHandler: APIClient?
     let nombreEstacion: String
     
-    let fontSize: CGFloat = 100
-    
-    
     var body: some View {
-
         ZStack {
-            LinearGradient(
-                colors: [.cyan, .blue],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-            .ignoresSafeArea()
-
-            VStack{
+            // Fondo azul
+            Color(#colorLiteral(red: 0.04, green: 0.10, blue: 0.35, alpha: 1.0))
+                .ignoresSafeArea()
+            
+            VStack(alignment: .leading, spacing: 16) {
+                // CONTENIDO DE ARRIBA (ciudad, temperatura, etc.)
+                Text(lastInfo?.estacion.capitalized ?? "")
+                    .padding(.top, 20)
+                    .font(.largeTitle.bold())
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity, alignment: .center)
                 
-                Text(lastInfo?.estacion ?? "Estacion")
+                
+                HStack{
+                    (
+                        Text(Double(lastInfo?.temperatura ?? 0), format: .number.precision(.fractionLength(0)))
+                            .foregroundColor(.white)
+                            .font(.system(size: 100))
+                        +
+                        Text("°C")
+                            .font(.system(size: 100))
+                            .foregroundColor(.white)
+                    )
+                }
+                .frame(maxWidth: .infinity, alignment: .center)
+                
+                Image(systemName: "cloud.rain")
+                    .foregroundColor(.white)
                     .font(.system(size: 80))
-                    .padding(30)
-                Text("Temperatura: ")
-                Text(Double(lastInfo?.temperatura ?? 0), format: .number.precision(.fractionLength(0))) //Sin decimales
-                    .font(.system(size: fontSize))
-                + Text("°")
-                    .font(.system(size: fontSize))
+                    .frame(maxWidth: .infinity, alignment: .center)
+                
+                VStack(){
+                    Text("Ultima actualizacion: ")
 
+                    Text(lastInfo?.fecha ?? "Loading...")
+                    
+                    Text(lastInfo?.hora ?? "Loading...")
+                }
+                .frame(maxWidth: .infinity, alignment: .center)
+                .font(.system(size: 15))
+                .padding(16)
+                .foregroundColor(.white.opacity(0.8))
+                
+                Spacer()
+                VStack(alignment: .leading, spacing: 16) {
+                    WeatherBottomCard(humedad: lastInfo?.humedad ?? 0.0, presion: lastInfo?.presion ?? 0.0)
+                    
+                    
+                    airQualityItem(calidadAire: lastInfo?.calidadAire ?? 0.0)
+                        .frame(maxWidth: .infinity, alignment: .center)
+                        
+                        
+                    
+                }
+                .padding(.vertical, 20)
+                .padding(.horizontal, 30)
+                .frame(maxWidth: .infinity)
+                .background(Color.white)
+                .clipShape(
+                    RoundedRectangle(cornerRadius: 30, style: .continuous))
+                .shadow(radius: 10)
+                .padding(.horizontal)   // margen lateral
+                .padding(.bottom, 8)    // para que “flote” un poquito
+                .ignoresSafeArea()
+                
             }
+            .padding()
         }
         .task {
             do {
@@ -50,13 +94,119 @@ struct LocationInfoView: View {
             } catch {
                 print("Unknown error")
             }
-        }
+            }
+    }
+}
 
+struct WeatherBottomCard: View {
+    
+    let humedad: Float
+    let presion: Float
+    
+    var body: some View {
+        
+            Text("Ultimo estado")
+                .font(.headline)
+            
+            HStack(spacing: 24) {
+                WeatherItem(title: "Presion", value: String(presion), systemImage: "aqi.medium")
+                Spacer()
+                WeatherItem(title: "Humedad", value: String(humedad), systemImage: "humidity")
+            }
+            .padding(.bottom)
+    }
+}
+
+struct WeatherItem: View {
+    let title: String
+    let value: String
+    let systemImage: String
+    
+    var body: some View {
+        HStack(spacing: 8) {
+            Image(systemName: systemImage)
+            VStack(alignment: .leading, spacing: 4) {
+                Text(title)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                Text(value)
+                    .font(.headline)
+            }
+        }
     }
 }
 
 
+struct airQualityItem: View {
+    
+    let calidadAire: Float
+    
+    private var progress: Double {
+        Double(calidadAire)/100.0
+    }
+    
+    var body: some View {
+        HStack{
+            ZStack{
+                Circle()
+                    .stroke(.quaternary, lineWidth: 10)
+                
+                Circle()
+                    .trim(from: 0, to: progress)
+                    .stroke(
+                        colorCalidadAire(calidadAire),
+                        style: StrokeStyle(lineWidth: 10, lineCap: .round))
+                    .rotationEffect(Angle(degrees: -90))
+                    .animation(.easeInOut(duration: 0.35), value: progress)
+                
+                Text(String(calidadAire))
+                    .font(.system(size: 20, weight: .bold))
+            }
+            .frame(width: 100, height: 100)
+            
+            Spacer()
+            Text(textoCalidadAire(calidadAire))
+        }
+    }
+}
+
+
+
+func textoCalidadAire(_ calidadAire: Float) -> String {
+    switch calidadAire {
+    case 0..<40:
+        return "Buena 🌿\nEl aire es limpio y seguro."
+    case 40..<55:
+        return "Aceptable 🙂\nAire adecuado para la mayoría."
+    case 55..<70:
+        return "Moderada 😐\nPersonas sensibles podrían molestarse."
+    case 70..<85:
+        return "Mala ⚠️\nEvita actividades al aire libre prolongadas."
+    case 85..<100:
+        return "Muy mala ☠️\nRiesgoso, permanece en interiores."
+    default:
+        return "Calculando calidad del aire..."
+    }
+}
+
+func colorCalidadAire(_ calidadAire: Float) -> Color {
+    switch calidadAire {
+    case 0..<40:
+        return .green
+    case 40..<55:
+        return .green
+    case 55..<70:
+        return .yellow
+    case 70..<85:
+        return .red
+    case 85..<100:
+        return .red
+    default:
+        return .blue
+    }
+}
+
 #Preview {
-    LocationInfoView(nombreEstacion: "Biblioteca")
+    LocationInfoView(nombreEstacion: "biblioteca")
 }
 

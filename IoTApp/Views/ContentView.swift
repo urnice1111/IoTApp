@@ -11,8 +11,6 @@ struct ContentView: View {
     
     @StateObject var viewModel = LocationsViewModel()
     
-
-    
     var body: some View {
         if viewModel.ubicaciones.isEmpty {
             ProgressView("Cargando ubicaciones...")
@@ -25,10 +23,12 @@ struct ContentView: View {
                     LocationInfoView(nombreEstacion: ubicacion.estacion)
                         .tabItem {
                             Label(ubicacion.estacion.capitalized,
-                                  systemImage: "building.2.fill")
+                                  systemImage: iconFor(ubicacion.estacion))
                         }
                 }
+                
             }
+            
             .task{
                 do {
                     try await viewModel.fetchLocations()
@@ -37,10 +37,21 @@ struct ContentView: View {
                 }
             }
         }
-        
-
     }
 }
+
+func iconFor(_ nombre: String) -> String {
+        switch nombre.lowercased() {
+        case "cafeteria":
+            return "cup.and.saucer.fill"
+        case "biblioteca":
+            return "books.vertical.fill"
+        case "gimnasio":
+            return "dumbbell.fill"
+        default:
+            return "building.2.fill"  // Fallback
+        }
+    }
 
 #Preview {
     ContentView()
