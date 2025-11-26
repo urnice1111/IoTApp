@@ -14,7 +14,7 @@ class LocationsViewModel: ObservableObject {
 
     func fetchLocations() async throws {
         
-        print("Entre al fetch de ubicaciones")
+        print("Entre al fetch de ubicaciones") //Debug
         let urlString = "http://\(ip)/api_handler_swift/get_locations.php"
         
         guard let url = URL(string: urlString) else {

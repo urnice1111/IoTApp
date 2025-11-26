@@ -17,7 +17,11 @@ struct LocationInfoView: View {
     var body: some View {
         ZStack {
             // Fondo azul
-            Color(#colorLiteral(red: 0.04, green: 0.10, blue: 0.35, alpha: 1.0))
+            LinearGradient(
+                gradient: Gradient(colors: [.blue,.cyan]),
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
                 .ignoresSafeArea()
             
             VStack(alignment: .leading, spacing: 16) {
@@ -49,10 +53,13 @@ struct LocationInfoView: View {
                 
                 VStack(){
                     Text("Ultima actualizacion: ")
+                        .foregroundStyle(.white)
 
                     Text(lastInfo?.fecha ?? "Loading...")
+                        .foregroundStyle(.white)
                     
                     Text(lastInfo?.hora ?? "Loading...")
+                        .foregroundStyle(.white)
                 }
                 .frame(maxWidth: .infinity, alignment: .center)
                 .font(.system(size: 15))
@@ -107,11 +114,14 @@ struct WeatherBottomCard: View {
         
             Text("Ultimo estado")
                 .font(.headline)
+                .foregroundStyle(.black)
             
             HStack(spacing: 24) {
                 WeatherItem(title: "Presión", value: String(presion), systemImage: "aqi.medium")
+                    .foregroundStyle(.black)
                 Spacer()
                 WeatherItem(title: "Humedad", value: String(humedad), systemImage: "humidity")
+                    .foregroundStyle(.black)
             }
             .padding(.bottom)
     }
@@ -128,10 +138,11 @@ struct WeatherItem: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
                     .font(.caption)
-                    .foregroundColor(.primary)
+                    .foregroundStyle(.black)
                     .fontWeight(.bold)
                 Text(value)
                     .font(.headline)
+                    .foregroundStyle(.black)
             }
         }
     }
@@ -161,6 +172,7 @@ struct airQualityItem: View {
                     .animation(.easeInOut(duration: 0.35), value: progress)
                 
                 Text(String(calidadAire))
+                    .foregroundStyle(.black)
                     .font(.system(size: 20, weight: .bold))
             }
             .frame(width: 100, height: 100)
@@ -168,12 +180,13 @@ struct airQualityItem: View {
             Spacer()
             VStack{
                 Text("Calidad del aire:")
-                    .foregroundColor(.primary)
+                    .foregroundStyle(.black)
                     .fontWeight(.bold)
                     .frame(alignment: .center)
                     
                 
                 Text(textoCalidadAire(calidadAire))
+                    .foregroundStyle(.black)
             }
             
         }
