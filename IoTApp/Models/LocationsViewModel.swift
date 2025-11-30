@@ -10,7 +10,7 @@ internal import Combine
 
 class LocationsViewModel: ObservableObject {
     @Published var ubicaciones: [Ubicacion] = []
-    let ip = "10.48.67.179" 
+    let ip = "192.168.1.216" 
 
     func fetchLocations() async throws {
         

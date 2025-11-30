@@ -11,6 +11,7 @@ import SwiftUI
 
 struct LocationInfoView: View {
     @State private var lastInfo: lastLecture? = nil
+    @State private var showPredictions = false
     var piHandler: APIClient?
     let nombreEstacion: String
     
@@ -70,8 +71,24 @@ struct LocationInfoView: View {
                     
                     airQualityItem(calidadAire: lastInfo?.calidadAire ?? 0.0)
                         .frame(maxWidth: .infinity, alignment: .center)
-                        
-                        
+                    
+                    // Botón para ver predicciones
+                    Button(action: {
+                        showPredictions = true
+                    }) {
+                        HStack {
+                            Image(systemName: "chart.line.uptrend.xyaxis")
+                                .font(.title3)
+                            Text("Ver Predicciones (24h)")
+                                .font(.headline)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.blue)
+                        .foregroundColor(.white)
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                    }
+                    
                     
                 }
                 .padding(.vertical, 20)
@@ -82,8 +99,23 @@ struct LocationInfoView: View {
                     RoundedRectangle(cornerRadius: 30, style: .continuous))
                 .shadow(radius: 10)
                 .padding(.horizontal)   // margen lateral
-                .padding(.bottom, 8)    // para que “flote” un poquito
+                .padding(.bottom, 8)    // para que "flote" un poquito
                 .ignoresSafeArea()
+                .sheet(isPresented: $showPredictions) {
+                    NavigationView {
+                        PredictionView(estacion: nombreEstacion)
+                            .navigationTitle("Predicciones")
+                            .navigationBarTitleDisplayMode(.inline)
+                            .toolbar {
+                                ToolbarItem(placement: .navigationBarTrailing) {
+                                    Button("Cerrar") {
+                                        showPredictions = false
+                                    }
+                                }
+                            }
+                    }
+                }
+                
                 
             }
             .padding()

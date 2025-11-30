@@ -21,7 +21,7 @@ struct Heatmap: View {
     )
     
     // Radio base para los círculos de calor (en metros)
-    private let baseRadius: CLLocationDistance = 60
+    private let baseRadius: CLLocationDistance = 50
     
     var body: some View {
         Group {
