@@ -10,7 +10,7 @@ import Foundation
 
 
 struct APIClient {
-    let ip = "192.168.1.216"
+    let ip = "10.48.67.179"
     
     func fetchData(estacion: String) async throws -> lastLecture {
         

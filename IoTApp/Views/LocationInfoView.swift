@@ -108,8 +108,10 @@ struct LocationInfoView: View {
                             .navigationBarTitleDisplayMode(.inline)
                             .toolbar {
                                 ToolbarItem(placement: .navigationBarTrailing) {
-                                    Button("Cerrar") {
+                                    Button{
                                         showPredictions = false
+                                    } label: {
+                                        Image(systemName: "xmark")
                                     }
                                 }
                             }

@@ -74,9 +74,15 @@ struct PredictionView: View {
                             Text(predictions.estacion.capitalized)
                                 .font(.title.bold())
                                 .foregroundColor(.white)
-                            Text("Predicciones para: \(predictions.fechaPrediccion)")
+                            Text("Predicciones desde: \(formatPredictionDate(predictions.fechaPrediccion))")
                                 .font(.subheadline)
                                 .foregroundColor(.white.opacity(0.8))
+                            if let firstPrediction = predictions.predicciones.first,
+                               let lastPrediction = predictions.predicciones.last {
+                                Text("Próximas \(predictions.predicciones.count) horas")
+                                    .font(.caption)
+                                    .foregroundColor(.white.opacity(0.7))
+                            }
                         }
                         .padding(.top)
                         
@@ -114,7 +120,7 @@ struct PredictionView: View {
                                 .padding(.horizontal)
                                 .foregroundColor(.white)
                             
-                            ForEach(predictions.predicciones.prefix(12)) { prediction in
+                            ForEach(predictions.predicciones) { prediction in
                                 PredictionRow(
                                     prediction: prediction,
                                     variable: selectedVariable
@@ -155,6 +161,30 @@ struct PredictionView: View {
         }
         
         isLoading = false
+    }
+    
+    private func formatPredictionDate(_ dateString: String) -> String {
+        // Intentar parsear diferentes formatos de fecha
+        let formatters = [
+            "yyyy-MM-dd HH:mm:ss",
+            "yyyy-MM-dd",
+            "yyyy-MM-dd HH:mm"
+        ]
+        
+        for format in formatters {
+            let formatter = DateFormatter()
+            formatter.dateFormat = format
+            if let date = formatter.date(from: dateString) {
+                let displayFormatter = DateFormatter()
+                displayFormatter.dateStyle = .medium
+                displayFormatter.timeStyle = .short
+                displayFormatter.locale = Locale(identifier: "es_ES")
+                return displayFormatter.string(from: date)
+            }
+        }
+        
+        // Si no se puede parsear, devolver el string original
+        return dateString
     }
 }
 
